@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -10,32 +10,47 @@ import {
 import ConfirmButton from '../../components/general/buttons/ConfirmButton';
 import CancelButton from '../../components/general/buttons/CancelButton';
 import useProjectStore from '../../stores/useProjectStore';
-import uuid from 'react-native-uuid';
 import OverlineLabel from '../../components/general/OverlineLabel';
+import DeleteButton from '../../components/general/buttons/DeleteButton';
 
-type NewProjectDialogProps = {
+type UpdateProjectDialogProps = {
   open: boolean,
   onClose: () => void,
 };
 
-const NewProjectDialog = ({ open, onClose }: NewProjectDialogProps) => {
-  const { addProject } = useProjectStore((state) => state);
+const UpdateProjectDialog = ({ open, onClose }: UpdateProjectDialogProps) => {
+  const { currentProjectId, getCurrentProject, deleteProject, updateProject } = useProjectStore((state) => state);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleAddProject = () => {
-    if (title) {
-      addProject({
-        id: uuid.v4(),
+  useEffect(() => {
+    const currProject = getCurrentProject()
+    
+    if (currProject) {
+        setTitle(currProject.title || '')
+        setDescription(currProject.description || '')
+    }
+  }, [open, currentProjectId])
+
+  const handleUpdateProject = () => {
+    if (currentProjectId && title) {
+      updateProject(currentProjectId, {
+        id: currentProjectId,
         title,
-        description,
+        description
       });
 
-      handleCloseAddProject();
+      handleCloseUpdateProject();
     }
   };
 
-  const handleCloseAddProject = () => {
+  const handleDeleteProject = () => {
+    deleteProject(currentProjectId!);
+    handleCloseUpdateProject();
+  }
+
+  const handleCloseUpdateProject = () => {
     setTitle('');
     setDescription('');
     onClose();
@@ -47,41 +62,46 @@ const NewProjectDialog = ({ open, onClose }: NewProjectDialogProps) => {
       animationType='slide'
     >
       <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>New Project</Text>
+        <Text style={styles.headerTitle}>Update Project</Text>
 
-        <TouchableOpacity onPress={handleCloseAddProject}>
+        <TouchableOpacity onPress={handleCloseUpdateProject}>
           <OverlineLabel text='Cancel' />
         </TouchableOpacity>
       </View>
 
       <View style={styles.bodyContainer}>
-        <View>       
+        <View>
           <OverlineLabel text='Title' />
 
           <TextInput
             style={styles.textInput}
             placeholder='Project Title'
             onChangeText={setTitle}
+            value={title}
           />
 
           <OverlineLabel text='Description' />
           <TextInput
             style={styles.textDescription}
             placeholder='Description'
-
             onChangeText={setDescription}
             multiline
             numberOfLines={5}
+            value={description}
           />
         </View>
 
         <View>
           <ConfirmButton
-            onPress={handleAddProject}
+            onPress={handleUpdateProject}
+            style={{ width: '98%', marginBottom: 5 }}
+          />
+          <DeleteButton
+            onPress={handleDeleteProject}
             style={{ width: '98%', marginBottom: 5 }}
           />
           <CancelButton
-            onPress={handleCloseAddProject}
+            onPress={handleCloseUpdateProject}
             style={{ width: '98%' }}
           />
         </View>
@@ -90,7 +110,7 @@ const NewProjectDialog = ({ open, onClose }: NewProjectDialogProps) => {
   );
 };
 
-export default NewProjectDialog;
+export default UpdateProjectDialog;
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -129,5 +149,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#393E46',
     flex: 1,
-  }
+  },
 });

@@ -10,10 +10,12 @@ import useProjectStore from '../../stores/useProjectStore';
 import { useState } from 'react';
 import NewProjectDialog from '../../dialogs/projects/NewProjectDialog';
 import OverlineLabel from '../general/OverlineLabel';
+import UpdateProjectDialog from '../../dialogs/projects/UpdateProjectDialog';
 
 const Projects = () => {
   const { projects } = useProjectStore((state) => state);
   const [openAddProjectDialog, setOpenAddProjectDialog] = useState(false);
+  const [openUpdateProjectDialog, setOpenUpdateProjectDialog] = useState(false);
 
   return (
     <View style={styles.projectContainer}>
@@ -34,7 +36,10 @@ const Projects = () => {
             data={projects}
             keyExtractor={(project) => project.id}
             renderItem={(projectData) => (
-              <ProjectItem project={projectData.item} />
+              <ProjectItem
+                project={projectData.item}
+                onEditProject={() => setOpenUpdateProjectDialog(true)}
+              />
             )}
             style={styles.projectListContainer}
             horizontal
@@ -52,6 +57,11 @@ const Projects = () => {
       <NewProjectDialog
         open={openAddProjectDialog}
         onClose={() => setOpenAddProjectDialog(false)}
+      />
+
+      <UpdateProjectDialog
+        open={openUpdateProjectDialog}
+        onClose={() => setOpenUpdateProjectDialog(false)}
       />
     </View>
   );
@@ -95,6 +105,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 500,
     fontSize: 20,
-    color: '#393E46'
-  }
+    color: '#393E46',
+  },
 });
