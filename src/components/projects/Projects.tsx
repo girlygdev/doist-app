@@ -9,6 +9,7 @@ import ProjectItem from './ProjectItem';
 import useProjectStore from '../../stores/useProjectStore';
 import { useState } from 'react';
 import NewProjectDialog from '../../dialogs/projects/NewProjectDialog';
+import OverlineLabel from '../general/OverlineLabel';
 
 const Projects = () => {
   const { projects } = useProjectStore((state) => state);
@@ -19,7 +20,7 @@ const Projects = () => {
       {projects.length ? (
         <View>
           <View style={styles.titleContainer}>
-            <Text style={styles.projectLabel}>Projects</Text>
+            <OverlineLabel text='Projects' />
 
             <TouchableOpacity
               onPress={() => setOpenAddProjectDialog(true)}
@@ -94,13 +95,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 500,
     fontSize: 20,
-    color: '#393E46',
-  },
-  projectLabel: {
-    color: '#393E46',
-    textTransform: 'uppercase',
-    fontWeight: 500,
-    fontSize: 12,
-    flex: 1,
-  },
+    color: '#393E46'
+  }
 });
