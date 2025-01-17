@@ -11,6 +11,7 @@ import { useState } from 'react';
 import NewProjectDialog from '../../dialogs/projects/NewProjectDialog';
 import OverlineLabel from '../general/OverlineLabel';
 import UpdateProjectDialog from '../../dialogs/projects/UpdateProjectDialog';
+import GlobalStyle from '../../constants/style';
 
 const Projects = () => {
   const { projects } = useProjectStore((state) => state);
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   addButton: {
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#00ADB5',
+    borderColor: GlobalStyle.colors.primary.main,
     paddingVertical: 5,
     paddingHorizontal: 10,
     marginRight: 5,
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   },
   addButtonEmpty: {
     borderWidth: 1,
-    borderColor: '#393E46',
+    borderColor: GlobalStyle.colors.dark.main,
     borderStyle: 'dashed',
     padding: 30,
     borderRadius: 16,
@@ -105,6 +106,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 500,
     fontSize: 20,
-    color: '#393E46',
+    color: GlobalStyle.colors.dark.main,
   },
 });
