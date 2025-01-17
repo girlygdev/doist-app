@@ -1,44 +1,41 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import GlobalStyle from '@constants/style';
-import LoginForm, { LoginFieldType } from '../../components/auth/LoginForm';
+import RegisterForm, { RegisterFieldType } from '@components/auth/RegisterForm';
 import Title from '@components/general/texts/Title';
 import CustomText from '@components/general/texts/Text';
 import CustomButton from '@components/general/buttons/CustomButton';
 
-const LoginScreen = () => {
+const RegisterScreen = () => {
   const navigation = useNavigation();
-
-  const submitHandler = (values: LoginFieldType) => {
+  const submitHandler = (values: RegisterFieldType) => {
     console.log(values);
   };
-
-  const signupHandler = () => {};
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Title>Sign in</Title>
-        <CustomText>Log back in to your account...</CustomText>
+        <Title>Sign Up</Title>
+        <CustomText>Create an account to get started...</CustomText>
       </View>
 
-      <LoginForm onSubmit={submitHandler} />
+      <RegisterForm onSubmit={submitHandler} />
 
       <View style={styles.footerContainer}>
         <CustomText style={styles.footerText}>
-          Don't have an account?
+          Already have an account?
         </CustomText>
         <CustomButton
-          text='Sign Up'
+          text='Login'
           flat
-          onPress={() => navigation.navigate('Register')}
+          onPress={() => navigation.navigate('Login')}
         />
       </View>
     </View>
   );
 };
 
-export default LoginScreen;
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   container: {

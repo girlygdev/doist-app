@@ -2,6 +2,7 @@
   "name": "doist-app",
   "version": "1.0.0",
   "main": "index.ts",
+  "private": true,
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -18,6 +19,7 @@
     "expo-font": "~13.0.3",
     "expo-splash-screen": "~0.29.20",
     "expo-status-bar": "~2.0.0",
+    "formik": "^2.4.6",
     "lodash": "^4.17.21",
     "react": "18.3.1",
     "react-native": "0.76.5",
@@ -27,6 +29,7 @@
     "react-native-screens": "~4.4.0",
     "react-native-uuid": "^2.0.3",
     "react-native-vector-icons": "^10.2.0",
+    "yup": "^1.0.0-alpha.3",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -34,6 +37,5 @@
     "@types/react": "~18.3.12",
     "@types/react-native-vector-icons": "^6.4.18",
     "typescript": "^5.3.3"
-  },
-  "private": true
+  }
 }
