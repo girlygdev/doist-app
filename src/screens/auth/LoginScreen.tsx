@@ -1,38 +1,79 @@
 import { StyleSheet, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import GlobalStyle from '@constants/style';
 import LoginForm, { LoginFieldType } from '../../components/auth/LoginForm';
 import Title from '@components/general/texts/Title';
 import CustomText from '@components/general/texts/Text';
 import CustomButton from '@components/general/buttons/CustomButton';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '@navigation/AuthStack';
+import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import LoadingOverlay from '@components/general/ui/LoadingOverlay';
+import app from 'firebaseConfig';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import InlineToast from '@components/general/ui/InlineToast';
+import useFirebaseAuthError from '@hooks/auth/useFirebaseAuthError';
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
+const auth = getAuth(app);
+
+interface LoginScreenProps {
+  navigation: NativeStackNavigationProp<AuthStackParamList, 'Login'>;
+}
+
+const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+  const rnNavigation = useNavigation();
+
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const { errorMessage, handleAuthError } = useFirebaseAuthError();
 
   const submitHandler = (values: LoginFieldType) => {
-    console.log(values);
+    setIsAuthenticating(true);
+
+    signInWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        console.log(userCredential);
+
+        setIsAuthenticating(false);
+        rnNavigation.navigate('Main');
+      })
+      .catch((error) => {
+        handleAuthError(error);
+        setIsAuthenticating(false);
+      });
   };
 
-  const signupHandler = () => {};
+  const navigateToRegister = () => navigation.replace('Register');
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Title>Sign in</Title>
-        <CustomText>Log back in to your account...</CustomText>
-      </View>
+    <View style={styles.root}>
+      {isAuthenticating && <LoadingOverlay message='Signing you up...' />}
 
-      <LoginForm onSubmit={submitHandler} />
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Title>Sign in</Title>
+          <CustomText>Log back in to your account...</CustomText>
+        </View>
 
-      <View style={styles.footerContainer}>
-        <CustomText style={styles.footerText}>
-          Don't have an account?
-        </CustomText>
-        <CustomButton
-          text='Sign Up'
-          flat
-          onPress={() => navigation.navigate('Register')}
-        />
+        <LoginForm onSubmit={submitHandler} />
+
+        {errorMessage && (
+          <InlineToast
+            color='error'
+            message={errorMessage}
+          />
+        )}
+
+        <View style={styles.footerContainer}>
+          <CustomText style={styles.footerText}>
+            Don't have an account?
+          </CustomText>
+          <CustomButton
+            text='Sign Up'
+            flat
+            onPress={navigateToRegister}
+          />
+        </View>
       </View>
     </View>
   );
@@ -41,9 +82,12 @@ const LoginScreen = () => {
 export default LoginScreen;
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: GlobalStyle.colors.secondary.light,
+    backgroundColor: GlobalStyle.colors.background,
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
@@ -60,5 +104,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     paddingTop: 16,
+  },
+  error: {
+    color: GlobalStyle.colors.error.main,
   },
 });

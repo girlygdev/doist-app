@@ -16,7 +16,7 @@ const GlobalStyle = {
       dark: '#16191f',
     },
     light: {
-      light: '#f6f6f7',
+      light: '#fefefe',
       main: '#d3d4d6',
       dark: '#bebfc1',
     },
@@ -26,7 +26,7 @@ const GlobalStyle = {
       dark: '#8b2929',
     },
     warning: {
-      light: '#fff2d2',
+      light: '#fff6e1',
       main: '#ffd369',
       dark: '#e6be5f',
     },
@@ -35,6 +35,13 @@ const GlobalStyle = {
       main: '#4682a9',
       dark: '#315b76',
     },
+    success: {
+      light: '#f4fbf5',
+      main: '#8ddb99',
+      dark: '#65bd73',
+    },
+    overlay: '#fff4f5',
+    background: '#fff0f1'
   },
 };
 
