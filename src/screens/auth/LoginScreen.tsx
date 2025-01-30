@@ -7,47 +7,39 @@ import CustomButton from '@components/general/buttons/CustomButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@navigation/AuthStack';
 import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import LoadingOverlay from '@components/general/ui/LoadingOverlay';
-import app from 'firebaseConfig';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import InlineToast from '@components/general/ui/InlineToast';
 import useFirebaseAuthError from '@hooks/auth/useFirebaseAuthError';
-
-const auth = getAuth(app);
+import useAuthStore from '@stores/useAuthStore';
+import { loginUser } from '@util/auth';
 
 interface LoginScreenProps {
   navigation: NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const rnNavigation = useNavigation();
-
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const {authenticate} = useAuthStore(state => state)
 
   const { errorMessage, handleAuthError } = useFirebaseAuthError();
 
-  const submitHandler = (values: LoginFieldType) => {
+  const submitHandler =  async (values: LoginFieldType) => {
     setIsAuthenticating(true);
 
-    signInWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
-        console.log(userCredential);
-
-        setIsAuthenticating(false);
-        rnNavigation.navigate('Main');
-      })
-      .catch((error) => {
-        handleAuthError(error);
-        setIsAuthenticating(false);
-      });
+    try {
+      const user = await loginUser(values.email, values.password)
+      authenticate(user)
+    } catch (error: any) {
+      handleAuthError(error);
+      setIsAuthenticating(false);
+    }
   };
 
   const navigateToRegister = () => navigation.replace('Register');
 
   return (
     <View style={styles.root}>
-      {isAuthenticating && <LoadingOverlay message='Signing you up...' />}
+      {isAuthenticating && <LoadingOverlay message='Logging you in...' />}
 
       <View style={styles.container}>
         <View style={styles.headerContainer}>

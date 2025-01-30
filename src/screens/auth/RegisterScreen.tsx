@@ -6,40 +6,33 @@ import CustomText from '@components/general/texts/Text';
 import CustomButton from '@components/general/buttons/CustomButton';
 import { AuthStackParamList } from '@navigation/AuthStack';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import app from 'firebaseConfig';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import LoadingOverlay from '@components/general/ui/LoadingOverlay';
-import { useNavigation } from '@react-navigation/native';
 import useFirebaseAuthError from '@hooks/auth/useFirebaseAuthError';
 import InlineToast from '@components/general/ui/InlineToast';
-
-const auth = getAuth(app);
+import { registerUser } from '@util/auth';
+import useAuthStore from '@stores/useAuthStore';
 
 interface RegisterScreenProps {
   navigation: NativeStackNavigationProp<AuthStackParamList, 'Register'>;
 }
 
 const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
-  const rnNavigation = useNavigation();
+  const {authenticate} = useAuthStore(state => state)
 
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const {errorMessage, handleAuthError} = useFirebaseAuthError()
 
-  const submitHandler = (values: RegisterFieldType) => {
+  const submitHandler =  async (values: RegisterFieldType) => {
     setIsAuthenticating(true);
-    createUserWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
-        console.log(userCredential);
 
-        setIsAuthenticating(false);
-        rnNavigation.navigate('Main');
-      })
-      .catch((error) => {
-        console.log(error.code)
-        handleAuthError(error);
-        setIsAuthenticating(false);
-      });
+    try {
+      const user = await registerUser(values.email, values.password)
+      authenticate(user)
+    } catch (error: any) {
+      handleAuthError(error);
+      setIsAuthenticating(false);
+    }
   };
 
   const navigateToLogin = () => navigation.replace('Login');

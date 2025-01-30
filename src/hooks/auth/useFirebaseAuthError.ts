@@ -15,10 +15,8 @@ const useFirebaseAuthError = () => {
         setErrorMessage('This account has been disabled.');
         break;
       case 'auth/user-not-found':
-        setErrorMessage('The email or password is incorrect.');
-        break;
       case 'auth/wrong-password':
-        setErrorMessage('Incorrect password. Please try again.');
+        setErrorMessage('The email or password is incorrect.');
         break;
       case 'auth/network-request-failed':
         setErrorMessage('Network error. Please check your internet connection.');
